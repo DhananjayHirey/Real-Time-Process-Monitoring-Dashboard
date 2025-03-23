@@ -1,0 +1,106 @@
+import customtkinter as ctk
+import psutil
+import time
+
+
+
+app = ctk.CTk()  
+app.title("Basic CustomTkinter App")
+app.geometry("400x300")
+
+# Title Label
+title_label = ctk.CTkLabel(app, text="Welcome to CustomTkinter", font=("Arial", 20, "bold"))
+title_label.pack(pady=20)
+
+
+
+
+res = []
+
+def display_process_info():
+    res.append(['PID','CPU%','Memory%','Name','Status'])
+    print("="*70)
+    for proc in psutil.process_iter(attrs=['pid', 'name', 'status']):
+        try:
+            process = proc.info
+            pid = process['pid']
+            name = process['name']
+            status = process['status']
+
+
+            cpu_percent = proc.cpu_percent(interval=0.1)  
+            memory_percent = proc.memory_percent()       
+
+            res.append([pid,cpu_percent,memory_percent,name,status])
+
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+
+            continue
+display_process_info()
+
+
+
+def kill_process():
+    pid = int(search_label.get())
+    try:
+        process = psutil.Process(pid)
+        process_name = process.name()
+
+
+        process.terminate()
+        process.wait(3)  
+
+        if process.is_running(): 
+            process.kill()
+            output_label.configure(text=f"❌ Process {process_name} (PID: {pid}) forcefully killed.")
+        else:
+            output_label.configure(text=f"✅ Process {process_name} (PID: {pid}) terminated successfully.")
+
+    except psutil.NoSuchProcess:
+        output_label.configure(text=f"⚠️ No such process with PID: {pid}")
+    except psutil.AccessDenied:
+        output_label.configure(text=f"⛔ Permission denied to terminate process {pid}")
+    except Exception as e:
+        output_label.configure(text=f"❗ An error occurred: {e}")
+
+
+def search():
+    key = int(search_label.get())
+    for i in range(1,len(res)):
+        if(key==res[i][0]):
+            output_label.configure(text=f"{res[i][0]}\t{round(res[i][1],2)}\t{round(res[i][2]*20,2)}\t{res[i][3]}\t{res[i][4]}")
+            break
+
+
+
+search_label = ctk.CTkEntry(app,placeholder_text='Enter the pid you need to search')
+search_label.pack()
+search_btn = ctk.CTkButton(app,command=search, text="search")
+search_btn.pack()
+output_label = ctk.CTkLabel(app,text="")
+output_label.pack()
+kill_btn = ctk.CTkButton(app,command=kill_process,text="Terminate?")
+kill_btn.pack()
+
+    #     if(search_label.)
+scrollable_frame = ctk.CTkScrollableFrame(app, width=350, height=300)
+scrollable_frame.pack(pady=20, padx=20, fill="both", expand=True)
+for i in range(1,len(res)):
+    output_label1 = ctk.CTkLabel(scrollable_frame, text=f"{res[i][0]}")
+    output_label1.grid(pady=12, row=i+1,column=0)
+    output_label2 = ctk.CTkLabel(scrollable_frame, text=f"{round(res[i][1],2)}")
+    if(round(res[i][2]*20,2)>50):
+        output_label2.grid(pady=12, row=i+1,column=1)
+        output_label3 = ctk.CTkLabel(scrollable_frame, text=f"{round(res[i][2]*20000,2)}")# bg_color=f"#{res[i][2]-50}0000"
+    else:
+        output_label2.grid(pady=12, row=i+1,column=1)
+        output_label3 = ctk.CTkLabel(scrollable_frame, text=f"{round(res[i][2]*20000,2)}")
+        
+    output_label3.grid(pady=12, row=i+1,column=2)
+    output_label4 = ctk.CTkLabel(scrollable_frame, text=f"{res[i][3]}")
+    output_label4.grid(pady=12, row=i+1,column=3)
+    output_label5 = ctk.CTkLabel(scrollable_frame, text=f"{res[i][4]}")
+    output_label5.grid(pady=12, row=i+1,column=4)
+    
+
+app.mainloop()
