@@ -3,7 +3,7 @@ import psutil
 import time
 
 
-
+# Initializing the app window.
 app = ctk.CTk()  
 app.title("Basic CustomTkinter App")
 app.geometry("400x300")
@@ -14,7 +14,7 @@ title_label.pack(pady=20)
 
 
 
-
+# Array to store process data.
 res = []
 
 def display_process_info():
@@ -36,10 +36,11 @@ def display_process_info():
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
 
             continue
+# Fetching process data at startup.
 display_process_info()
 
 
-
+# Function to Terminate a process using it's PID.
 def kill_process():
     pid = int(search_label.get())
     try:
@@ -48,7 +49,7 @@ def kill_process():
 
 
         process.terminate()
-        process.wait(3)  
+        process.wait(3)  # Wait during termination.
 
         if process.is_running(): 
             process.kill()
@@ -63,7 +64,7 @@ def kill_process():
     except Exception as e:
         output_label.configure(text=f"❗ An error occurred: {e}")
 
-
+# Search for a process using it's PID and displaying it's details.
 def search():
     key = int(search_label.get())
     for i in range(1,len(res)):
@@ -72,19 +73,30 @@ def search():
             break
 
 
-
+# PID Input Field/Box.
 search_label = ctk.CTkEntry(app,placeholder_text='Enter the pid you need to search')
 search_label.pack()
+
+# Search button.
 search_btn = ctk.CTkButton(app,command=search, text="search")
 search_btn.pack()
+
+# Output Label.
 output_label = ctk.CTkLabel(app,text="")
 output_label.pack()
+
+# Terminate button.
 kill_btn = ctk.CTkButton(app,command=kill_process,text="Terminate?")
 kill_btn.pack()
 
+
+
     #     if(search_label.)
+# Scrollable Window for displaying Process List.
 scrollable_frame = ctk.CTkScrollableFrame(app, width=350, height=300)
 scrollable_frame.pack(pady=20, padx=20, fill="both", expand=True)
+
+# Displaying Process List into the Scrollable Frame.
 for i in range(1,len(res)):
     output_label1 = ctk.CTkLabel(scrollable_frame, text=f"{res[i][0]}")
     output_label1.grid(pady=12, row=i+1,column=0)
@@ -102,5 +114,5 @@ for i in range(1,len(res)):
     output_label5 = ctk.CTkLabel(scrollable_frame, text=f"{res[i][4]}")
     output_label5.grid(pady=12, row=i+1,column=4)
     
-
+# Function call to Run the application.
 app.mainloop()
