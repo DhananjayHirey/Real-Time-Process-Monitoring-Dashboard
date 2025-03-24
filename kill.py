@@ -1,5 +1,6 @@
 import psutil
 
+# Function to kill process forcefully if needed.
 def kill_process(pid):
     try:
         process = psutil.Process(pid)
