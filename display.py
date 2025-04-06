@@ -14,7 +14,7 @@ title_label.pack(pady=20)
 
 
 
-# Array to store process data.
+# Array to process data.
 res = []
 
 def display_process_info():
