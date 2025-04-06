@@ -40,7 +40,7 @@ def display_process_info():
 display_process_info()
 
 
-# Function to Terminate a process using it's PID.
+# Function to Terminate a process using it
 def kill_process():
     pid = int(search_label.get())
     try:
