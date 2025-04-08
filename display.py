@@ -116,3 +116,32 @@ for i in range(1,len(res)):
     
 # Function call to Run the application.
 app.mainloop()
+
+def refresh_process_list():
+    global res
+    res = [['PID','CPU%','Memory%','Name','Status']]
+    for widget in scrollable_frame.winfo_children():
+        widget.destroy()
+    for proc in psutil.process_iter(attrs=['pid', 'name', 'status']):
+        try:
+            process = proc.info
+            pid = process['pid']
+            name = process['name']
+            status = process['status']
+            cpu_percent = proc.cpu_percent(interval=0.1)  
+            memory_percent = proc.memory_percent()
+            res.append([pid,cpu_percent,memory_percent,name,status])
+        except:
+            continue
+
+    for i in range(1,len(res)):
+        ctk.CTkLabel(scrollable_frame, text=f"{res[i][0]}").grid(pady=6, row=i,column=0)
+        ctk.CTkLabel(scrollable_frame, text=f"{round(res[i][1],2)}").grid(pady=6, row=i,column=1)
+        ctk.CTkLabel(scrollable_frame, text=f"{round(res[i][2]*20000,2)}").grid(pady=6, row=i,column=2)
+        ctk.CTkLabel(scrollable_frame, text=f"{res[i][3]}").grid(pady=6, row=i,column=3)
+        ctk.CTkLabel(scrollable_frame, text=f"{res[i][4]}").grid(pady=6, row=i,column=4)
+
+
+#A button to refresh
+refresh_btn = ctk.CTkButton(app, command=refresh_process_list, text="🔄 Refresh List")
+refresh_btn.pack()
